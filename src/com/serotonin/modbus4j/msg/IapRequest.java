@@ -5,12 +5,12 @@
  *
  * Copyright (C) 2006-2011 Serotonin Software Technologies Inc. http://serotoninsoftware.com
  * @author Matthew Lohbihler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -35,6 +35,12 @@ import com.serotonin.modbus4j.sero.util.queue.ByteQueue;
  * @version 5.0.0
  */
 public class IapRequest extends ModbusRequest {
+    private short total;
+
+    private short current;
+
+    private byte[] data;
+
     @Override
     public void validate(Modbus modbus) throws ModbusTransportException {
     }
@@ -44,12 +50,14 @@ public class IapRequest extends ModbusRequest {
         super(slaveId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void writeRequest(ByteQueue queue) {
-//        ModbusUtils.pushShort(queue, writeOffset);
-//        ModbusUtils.pushShort(queue, andMask);
-//        ModbusUtils.pushShort(queue, orMask);
+        queue.pushShort(this.total);
+        queue.pushShort(this.current);
+        queue.push(this.data);
     }
 
     @Override
@@ -57,7 +65,9 @@ public class IapRequest extends ModbusRequest {
         return new IapResponse(slaveId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public byte getFunctionCode() {
         return FunctionCode.IAP_REGISTER;
@@ -68,9 +78,15 @@ public class IapRequest extends ModbusRequest {
         return new IapResponse(slaveId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void readRequest(ByteQueue queue) {
+        this.total = (short) (queue.pop() << 8 | queue.pop());
+        this.current = (short) (queue.pop() << 8 | queue.pop());
+        this.data = new byte[queue.size()-2];
+        queue.pop(this.data);
 //        writeOffset = ModbusUtils.popUnsignedShort(queue);
 //        andMask = ModbusUtils.popUnsignedShort(queue);
 //        orMask = ModbusUtils.popUnsignedShort(queue);

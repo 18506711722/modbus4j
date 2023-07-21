@@ -10,7 +10,7 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
         {
-            ByteQueue b = new ByteQueue("01410000000271cb");
+            ByteQueue b = new ByteQueue("0141000A0001AAAAE7DD");
             EncapMessageParser parser = new EncapMessageParser(false);
             IncomingMessage m = parser.parseMessage(b);
             System.out.println(m);
