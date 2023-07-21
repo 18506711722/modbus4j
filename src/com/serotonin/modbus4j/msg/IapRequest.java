@@ -43,6 +43,7 @@ public class IapRequest extends ModbusRequest {
 
     @Override
     public void validate(Modbus modbus) throws ModbusTransportException {
+        // no op
     }
 
 
@@ -87,8 +88,5 @@ public class IapRequest extends ModbusRequest {
         this.current = (short) (queue.pop() << 8 | queue.pop());
         this.data = new byte[queue.size()-2];
         queue.pop(this.data);
-//        writeOffset = ModbusUtils.popUnsignedShort(queue);
-//        andMask = ModbusUtils.popUnsignedShort(queue);
-//        orMask = ModbusUtils.popUnsignedShort(queue);
     }
 }
