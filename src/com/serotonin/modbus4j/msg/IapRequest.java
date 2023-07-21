@@ -47,7 +47,7 @@ public class IapRequest extends ModbusRequest {
     }
 
 
-    IapRequest(int slaveId) throws ModbusTransportException {
+    public IapRequest(int slaveId) throws ModbusTransportException {
         super(slaveId);
     }
 
