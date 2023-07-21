@@ -16,7 +16,7 @@ public class Test {
             System.out.println(m);
         }
         {
-            ByteQueue b = new ByteQueue("01040404d2162ed4f1");
+            ByteQueue b = new ByteQueue("0141001050");
             EncapMessageParser parser = new EncapMessageParser(true);
             IncomingMessage m = parser.parseMessage(b);
             System.out.println(m);
