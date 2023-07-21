@@ -71,6 +71,8 @@ abstract public class ModbusRequest extends ModbusMessage {
             request = new ReportSlaveIdRequest(slaveId);
         // else if (functionCode == FunctionCode.WRITE_MASK_REGISTER)
         // request = new WriteMaskRegisterRequest(slaveId);
+        else if (functionCode == FunctionCode.IAP_REGISTER)
+            request = new IapRequest(slaveId);
         else
             request = new ExceptionRequest(slaveId, functionCode, ExceptionCode.ILLEGAL_FUNCTION);
 

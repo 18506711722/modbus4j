@@ -50,6 +50,8 @@ public class FunctionCode {
     /** Constant <code>WRITE_MASK_REGISTER=22</code> */
     public static final byte WRITE_MASK_REGISTER = 22;
 
+    public static final byte IAP_REGISTER = 65;
+
     /**
      * <p>toString.</p>
      *

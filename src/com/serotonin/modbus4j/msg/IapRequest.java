@@ -35,74 +35,10 @@ import com.serotonin.modbus4j.sero.util.queue.ByteQueue;
  * @version 5.0.0
  */
 public class IapRequest extends ModbusRequest {
-    private int writeOffset;
-
-    /**
-     * The andMask determines which bits we want to change. If a bit in the andMask is 1, it indicates that the value
-     * should not be changed. If it is zero, it should be changed according to the orMask value for that bit.
-     */
-    private int andMask;
-
-    /**
-     * The orMask determines what value a bit will have after writing if the andMask allows that bit to be changed. If a
-     * changable bit in the orMask is 0, the bit in the result will be zero. Ditto for 1.
-     */
-    private int orMask;
-
-    /**
-     * Constructor that defaults the masks to have no effect on the register. Use the setBit function to modify mask
-     * values.
-     *
-     * @param slaveId a int.
-     * @param writeOffset a int.
-     * @throws ModbusTransportException when necessary
-     */
-    public IapRequest(int slaveId, int writeOffset) throws ModbusTransportException {
-        this(slaveId, writeOffset, 0xffff, 0);
-    }
-
-    /**
-     * <p>Constructor for WriteMaskRegisterRequest.</p>
-     *
-     * @param slaveId a int.
-     * @param writeOffset a int.
-     * @param andMask a int.
-     * @param orMask a int.
-     * @throws ModbusTransportException if any.
-     */
-    public IapRequest(int slaveId, int writeOffset, int andMask, int orMask)
-            throws ModbusTransportException {
-        super(slaveId);
-        this.writeOffset = writeOffset;
-        this.andMask = andMask;
-        this.orMask = orMask;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public void validate(Modbus modbus) throws ModbusTransportException {
-        ModbusUtils.validateOffset(writeOffset);
     }
 
-    /**
-     * <p>setBit.</p>
-     *
-     * @param bit a int.
-     * @param value a boolean.
-     */
-    public void setBit(int bit, boolean value) {
-        if (bit < 0 || bit > 15)
-            throw new ModbusIdException("Bit must be between 0 and 15 inclusive");
-
-        // Set the bit in the andMask to 0 to allow writing.
-        andMask = andMask & ~(1 << bit);
-
-        // Set the bit in the orMask to write the correct value.
-        if (value)
-            orMask = orMask | 1 << bit;
-        else
-            orMask = orMask & ~(1 << bit);
-    }
 
     IapRequest(int slaveId) throws ModbusTransportException {
         super(slaveId);
@@ -111,35 +47,32 @@ public class IapRequest extends ModbusRequest {
     /** {@inheritDoc} */
     @Override
     protected void writeRequest(ByteQueue queue) {
-        ModbusUtils.pushShort(queue, writeOffset);
-        ModbusUtils.pushShort(queue, andMask);
-        ModbusUtils.pushShort(queue, orMask);
+//        ModbusUtils.pushShort(queue, writeOffset);
+//        ModbusUtils.pushShort(queue, andMask);
+//        ModbusUtils.pushShort(queue, orMask);
     }
 
     @Override
     ModbusResponse handleImpl(ProcessImage processImage) throws ModbusTransportException {
-        short value = processImage.getHoldingRegister(writeOffset);
-        value = (short) ((value & andMask) | (orMask & (~andMask)));
-        processImage.writeHoldingRegister(writeOffset, value);
-        return new WriteMaskRegisterResponse(slaveId, writeOffset, andMask, orMask);
+        return new IapResponse(slaveId);
     }
 
     /** {@inheritDoc} */
     @Override
     public byte getFunctionCode() {
-        return FunctionCode.WRITE_MASK_REGISTER;
+        return FunctionCode.IAP_REGISTER;
     }
 
     @Override
     ModbusResponse getResponseInstance(int slaveId) throws ModbusTransportException {
-        return new WriteMaskRegisterResponse(slaveId);
+        return new IapResponse(slaveId);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void readRequest(ByteQueue queue) {
-        writeOffset = ModbusUtils.popUnsignedShort(queue);
-        andMask = ModbusUtils.popUnsignedShort(queue);
-        orMask = ModbusUtils.popUnsignedShort(queue);
+//        writeOffset = ModbusUtils.popUnsignedShort(queue);
+//        andMask = ModbusUtils.popUnsignedShort(queue);
+//        orMask = ModbusUtils.popUnsignedShort(queue);
     }
 }
